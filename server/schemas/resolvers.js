@@ -4,8 +4,11 @@ const { signToken } = require('../utils/auth');
 
 const resolvers = {
   Query: {
-    me: async (parent, { username }) => {
-      return User.findOne({ username }).populate('thoughts');
+    me: async (parent, args, context) => {
+      if (context.user) {
+        return User.findOne({ _id: context.user._id });
+      }
+      throw new AuthenticationError('Please login first.');
     },
   },
 
@@ -31,21 +34,21 @@ const resolvers = {
       const token = signToken(user);
       return { token, user };
     },
-    saveBook: async (parent, { user, body }, context) => {
+    saveBook: async (parent, { newBook }, context) => {
       if (context.user) {
         return User.findOneAndUpdate(
-          { _id: user._id },
-          { $addtoSet: { savedBooks: body } },
+          { _id: context.user._id },
+          { $push: { savedBooks: newBook } },
           { new: true, runValidators: true }
         );
       }
       throw new AuthenticationError('You need to be logged in!');
     },
-    removeBook: async (parent, { user, params }, context) => {
+    removeBook: async (parent, { bookId }, context) => {
       if (context.user) {
         return User.findOneAndUpdate(
-          { _id: user._id },
-          { $pull: { savedBooks: { bookId: params.bookId } } },
+          { _id: context.user._id },
+          { $pull: { savedBooks: { bookId } } },
           { new: true }
         );
       }
