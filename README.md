@@ -2,6 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+[Deployed App](https://pure-taiga-67636.herokuapp.com/)
+
 ## Description
 
 This app allows users to search for various books using the google books API. This project was created as a part of the University of Denver Coding Bootcamp.
